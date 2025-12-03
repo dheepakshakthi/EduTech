@@ -1,68 +1,98 @@
-body {
-    background: #e8f1ff;
-    font-family: Arial, sans-serif;
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: #f3f4f6;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-.container.center {
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.login-box h2 {
     text-align: center;
+    margin-bottom: 25px;
+    color: #111827;
 }
 
-h1, h2 {
-    color: #0a59d3;
+.input-group {
+    margin-bottom: 18px;
 }
 
-p { color: #333; }
-
-.btn-group {
-    margin-top: 20px;
+.input-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
 }
 
-.btn {
-    padding: 12px 22px;
-    margin: 8px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.2s;
 }
 
-.primary { background:#0a59d3; color:white; }
-.secondary { border:2px solid #0a59d3; color:#0a59d3; }
+.input-group input:focus {
+    border-color: #2563eb;
+    outline: none;
+}
 
-.form-card {
-    background:white;
-    padding: 35px;
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #2563eb;
+    color: white;
+    border: none;
     border-radius: 10px;
-    width:320px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-input {
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:1px solid #b7cff6;
-    border-radius:6px;
-    font-size:15px;
+.login-btn:hover {
+    background: #1d4ed8;
 }
 
-input:focus {
-    border-color:#0a59d3;
-    outline:none;
+.links {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.links a {
+    font-size: 14px;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
 }
 
 .error {
-    color:red;
-    margin-top:10px;
+    color: red;
+    font-size: 13px;
+    margin-top: 4px;
 }
 
-.link-text a {
-    color:#0a59d3;
-    font-weight:bold;
-    text-decoration:none;
-}
