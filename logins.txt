@@ -1,0 +1,4 @@
+John Doe	john.doe@example.com	password123
+Jane Smith	jane.smith@example.com	securepass456
+
+NOTE : THESE USERS NEED TO BE ADDED TO THE ADMIN AUTHENTICATION PORTAL
