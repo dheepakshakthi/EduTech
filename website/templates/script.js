@@ -98,3 +98,72 @@ let isValid = true;
                 this.reset();
             }
         });
+// Signup Form with Django Backend Integration
+document.getElementById('loginFormSubmit').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    const emailError = document.getElementById('loginEmailError');
+    const passwordError = document.getElementById('loginPasswordError');
+
+    // ... (Keep your existing validation logic here) ...
+
+    if (isValid) {
+        // Send data to Django Backend
+        fetch('/api/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, password: password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message); // "Login successful!"
+                window.location.reload(); // Or redirect to dashboard
+            } else {
+                // Show error from backend (e.g., "Invalid password")
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
+
+document.getElementById('signupFormSubmit').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value.trim();
+    // ... (Keep existing variable definitions) ...
+
+    // ... (Keep your existing validation logic here) ...
+
+    if (isValid) {
+        // Send data to Django Backend
+        fetch('/api/signup/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                email: email, 
+                password: password,
+                name: "New User" // You can add a name field to your HTML later
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                switchToLogin();
+                this.reset();
+            } else {
+                alert(data.message); // e.g., "Email already registered"
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
