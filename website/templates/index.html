@@ -1,39 +1,80 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Welcome Back</title>
+    <link rel="stylesheet" href="{% static 'website/styles.css' %}" />
 </head>
 <body>
-
     <div class="container">
-        <form id="loginForm" class="login-box">
-            <h2>Login</h2>
-
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="text" id="email" placeholder="Enter your email">
-                <p class="error" id="emailError"></p>
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-box">
+            <div class="welcome-text">
+                <h1>Welcome Back!</h1>
+                <p>Sign in to continue to your account</p>
             </div>
 
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password">
-                <p class="error" id="passwordError"></p>
+            <form id="loginFormSubmit">
+                <div class="input-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" autocomplete="email">
+                    <span class="error" id="loginEmailError"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+                    <span class="error" id="loginPasswordError"></span>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="alert('Password reset feature coming soon!'); return false;">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="auth-btn">Sign In</button>
+
+                <div class="switch-form">
+                    <p>Don't have an account? <button type="button" onclick="switchToSignup()">Create Account</button></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" class="auth-box hidden">
+            <div class="welcome-text">
+                <h1>Join Us!</h1>
+                <p>Create your account to get started</p>
             </div>
 
-            <button type="submit" class="login-btn">Login</button>
+            <form id="signupFormSubmit">
+                <div class="input-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" autocomplete="email">
+                    <span class="error" id="signupEmailError"></span>
+                </div>
 
-            <div class="links">
-                <a href="#">Forgot Password?</a>
-                <a href="#">Create Account</a>
-            </div>
-        </form>
+                <div class="input-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" autocomplete="new-password">
+                    <span class="error" id="signupPasswordError"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" autocomplete="new-password">
+                    <span class="error" id="confirmPasswordError"></span>
+                </div>
+
+                <button type="submit" class="auth-btn">Create Account</button>
+
+                <div class="switch-form">
+                    <p>Already have an account? <button type="button" onclick="switchToLogin()">Sign In</button></p>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <script src="script.js"></script>
+   <script src="{% static 'website/script.js' %}"></script>
 </body>
 </html>
-
