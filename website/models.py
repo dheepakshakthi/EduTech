@@ -17,3 +17,39 @@ class User(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.email})"
+
+
+class Subject(models.Model):
+    slug = models.SlugField(max_length=100, unique=True)
+    title = models.CharField(max_length=200)
+
+    class Meta:
+        db_table = 'subjects'
+        ordering = ['title']  # Alphabetical ordering by title
+
+    def __str__(self):
+        return self.title
+
+
+class Recommendation(models.Model):
+    title = models.CharField(max_length=200)
+    icon = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'recommendations'
+
+    def __str__(self):
+        return self.title
+
+
+class Session(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sessions')
+    title = models.CharField(max_length=200)
+    subject = models.CharField(max_length=100)
+    started_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'sessions'
+
+    def __str__(self):
+        return f"{self.title} - {self.user.name}"
