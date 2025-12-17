@@ -32,6 +32,7 @@ class Subject(models.Model):
 
 
 class Recommendation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recommendations')
     title = models.CharField(max_length=200)
     icon = models.CharField(max_length=100)
 

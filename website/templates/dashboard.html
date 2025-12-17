@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #0A2472;
+            --secondary-color: #667EEA;
+            --accent-color: #FFD93D;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --border-color: #e5e7eb;
+        }
+
+        .dashboard-page {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+            background: #F5F7FA;
+        }
+
+        .sidebar {
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem;
+        }
+
+        .sidebar .logo {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: 2rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+        }
+
+        .dashboard-main {
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .greeting h1 {
+            font-size: 28px;
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .greeting h1 span {
+            color: var(--secondary-color);
+        }
+
+        .greeting p {
+            color: var(--text-light);
+            font-size: 15px;
+        }
+
+        .return-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .return-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .dashboard-hero {
+            background: linear-gradient(135deg, #E8F4F8 0%, #D6EAF8 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mission-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .mission-box h3 {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .mission-box p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .hero-center {
+            text-align: center;
+        }
+
+        .hero-center h2 {
+            font-size: 36px;
+            color: var(--primary-color);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero-center .highlight {
+            font-size: 72px;
+            color: var(--secondary-color);
+        }
+
+        .hero-center .subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-top: 1rem;
+        }
+
+        .floating-orb-dashboard {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .subjects-section {
+            margin-bottom: 2rem;
+        }
+
+        .subjects-section h2 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .subject-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .subject-card.math { border-left: 4px solid #A0D8F1; }
+        .subject-card.physics { border-left: 4px solid #FDB750; }
+        .subject-card.coding { border-left: 4px solid #FFD93D; }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .subject-tag {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .subject-progress {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .subject-card h3 {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+        }
+
+        .subject-card p {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .subject-icon {
+            display: flex;
+            justify-content: center;
+        }
+
+        .panels-section {
+            margin-bottom: 2rem;
+        }
+
+        .panels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel h3 {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-chart {
+            position: relative;
+            text-align: center;
+        }
+
+        .progress-stat {
+            margin-top: 1rem;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .data-stats {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .ranking-box {
+            text-align: center;
+        }
+
+        .rank-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .rank-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .progress-detail {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .progress-desc {
+            color: var(--text-light);
+        }
+
+        .progress-note {
+            font-size: 12px;
+            color: var(--text-light);
+            font-style: italic;
+            text-align: center;
+        }
+
+        .recommendations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-item:hover {
+            background: #E8F4F8;
+            transform: translateX(5px);
+        }
+
+        .rec-icon {
+            font-size: 32px;
+        }
+
+        .rec-content h4 {
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .rec-content p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-hero {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-page {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+            .subjects-grid, .panels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">Learnly</div>
+        <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link active">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 3L2 8v9h6v-5h4v5h6V8l-8-5z"/>
+                </svg>
+                <span>Home</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <rect x="3" y="3" width="14" height="14" rx="2"/>
+                    <line x1="3" y1="8" x2="17" y2="8" stroke="white" stroke-width="1.5"/>
+                </svg>
+                <span>Courses</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <circle cx="10" cy="10" r="7"/>
+                    <path d="M10 6v4l3 2" stroke="white" stroke-width="1.5" fill="none"/>
+                </svg>
+                <span>Schedule</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11h-2v-2h2v2zm0-4h-2V5h2v4z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3 3h8v2H5v10h6v2H3V3zm12 4l-4 4 4 4v-3h5V10h-5V7z"/>
+                </svg>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="greeting">
+                    <h1>Hi! <span id="userName">User</span>, welcome</h1>
+                    <p>Ready to continue your learning journey?</p>
+                </div>
+                <button class="return-btn" onclick="window.location.href='/'">Return ↩</button>
+            </div>
+        </header>
+
+        <!-- Hero Banner -->
+        <section class="dashboard-hero">
+            <div class="hero-left">
+                <div class="study-illustration">
+                    <svg width="200" height="200" viewBox="0 0 200 200">
+                        <circle cx="100" cy="80" r="40" fill="#FFD93D"/>
+                        <rect x="70" y="120" width="60" height="70" rx="5" fill="#667EEA"/>
+                        <circle cx="85" cy="75" r="5" fill="#333"/>
+                        <circle cx="115" cy="75" r="5" fill="#333"/>
+                        <path d="M85 90 Q100 95 115 90" stroke="#333" stroke-width="2" fill="none"/>
+                        <rect x="50" y="160" width="100" height="10" rx="5" fill="#4A5568"/>
+                    </svg>
+                </div>
+                <div class="mission-box">
+                    <h3>📋 Mission</h3>
+                    <p>Complete today's learning goals</p>
+                </div>
+            </div>
+            <div class="hero-center">
+                <h2>THIS IS YOUR <span class="highlight">1</span> DAY</h2>
+                <h2>OF STUDY</h2>
+                <p class="subtitle">Go and study</p>
+            </div>
+            <div class="hero-right">
+                <div class="floating-orb-dashboard"></div>
+            </div>
+        </section>
+
+        <!-- Subject Cards -->
+        <section class="subjects-section">
+            <h2>Your Classes</h2>
+            <div class="subjects-grid">
+                <div class="subject-card math">
+                    <div class="subject-header">
+                        <span class="subject-tag">video</span>
+                        <span class="subject-progress">4/8</span>
+                    </div>
+                    <h3>Python</h3>
+                    <p>Participate in training, unlock new tasks and achieve results</p>
+                    <div class="subject-icon">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle cx="40" cy="40" r="35" fill="#A0D8F1" opacity="0.3"/>
+                            <path d="M25 40 L35 50 L55 30" stroke="#0A2472" stroke-width="4" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="subject-card physics">
+                    <div class="subject-header">
+                        <span class="subject-tag">video</span>
+                        <span class="subject-progress">5/8</span>
+                    </div>
+                    <h3>Maths</h3>
+                    <p>Participate in training, unlock new tasks and achieve results</p>
+                    <div class="subject-icon">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <rect x="30" y="15" width="20" height="50" rx="2" fill="#FDB750"/>
+                            <circle cx="40" cy="25" r="8" fill="#333"/>
+                            <line x1="25" y1="50" x2="55" y2="50" stroke="#333" stroke-width="3"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="subject-card coding">
+                    <div class="subject-header">
+                        <span class="subject-tag">video</span>
+                        <span class="subject-progress">2/6</span>
+                    </div>
+                    <h3>DBMS</h3>
+                    <p>Participate in training, unlock new tasks and achieve results</p>
+                    <div class="subject-icon">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <rect x="15" y="20" width="20" height="20" rx="3" fill="#FFD93D"/>
+                            <rect x="45" y="20" width="20" height="20" rx="3" fill="#A0D8F1"/>
+                            <rect x="15" y="45" width="20" height="20" rx="3" fill="#FDB750"/>
+                            <rect x="45" y="45" width="20" height="20" rx="3" fill="#98D8C8"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Panels -->
+        <section class="panels-section">
+            <div class="panels-grid">
+                <!-- Progress Panel -->
+                <div class="panel progress-panel">
+                    <h3>achievement</h3>
+                    <div class="progress-chart">
+                        <canvas id="progressChart"></canvas>
+                        <div class="progress-stat">
+                            <div class="stat-value">80%</div>
+                            <div class="stat-label">Keep trying~</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Sessions Panel -->
+                <div class="panel sessions-panel">
+                    <h3>data</h3>
+                    <div class="data-stats">
+                        <div class="circular-progress">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" stroke-width="10"/>
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#667EEA" stroke-width="10" 
+                                        stroke-dasharray="188.4 314" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                                <text x="60" y="65" text-anchor="middle" font-size="24" font-weight="bold" fill="#0A2472">60%</text>
+                            </svg>
+                        </div>
+                        <div class="ranking-box">
+                            <div class="rank-number">15</div>
+                            <div class="rank-label">Ranking</div>
+                        </div>
+                    </div>
+                    <div class="progress-detail">
+                        <div class="progress-item">
+                            <span class="progress-label">🏆 60%</span>
+                            <span class="progress-desc">Progress</span>
+                        </div>
+                        <div class="progress-note">More than most people!</div>
+                    </div>
+                </div>
+
+                <!-- Recommendations Panel -->
+                <div class="panel recommendations-panel">
+                    <h3>Recommended for You</h3>
+                    <div class="recommendations-list">
+                        <div class="recommendation-item">
+                            <div class="rec-icon">📚</div>
+                            <div class="rec-content">
+                                <h4>Advanced Mathematics</h4>
+                                <p>Continue where you left off</p>
+                            </div>
+                        </div>
+                        <div class="recommendation-item">
+                            <div class="rec-icon">🧪</div>
+                            <div class="rec-content">
+                                <h4>Physics Fundamentals</h4>
+                                <p>New module available</p>
+                            </div>
+                        </div>
+                        <div class="recommendation-item">
+                            <div class="rec-icon">💻</div>
+                            <div class="rec-content">
+                                <h4>Coding Challenges</h4>
+                                <p>Test your skills</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const storedUser = sessionStorage.getItem('user');
+            
+            if (!storedUser) {
+                alert('Please sign in to access the dashboard');
+                window.location.href = '/auth/';
+                return;
+            }
+            
+            const userData = JSON.parse(storedUser);
+            displayUserInfo(userData);
+            drawProgressChart();
+        });
+
+        // Display user information
+        function displayUserInfo(userData) {
+            const userName = document.getElementById('userName');
+            
+            if (userData && userName) {
+                userName.textContent = userData.name || userData.firstName || 'User';
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('user');
+                window.location.href = '/';
+            }
+        }
+
+        // Draw progress chart
+        function drawProgressChart() {
+            const canvas = document.getElementById('progressChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = 300;
+            canvas.height = 150;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = '#667EEA';
+            ctx.lineWidth = 3;
+            
+            const amplitude = 30;
+            const frequency = 0.02;
+            const yOffset = canvas.height / 2;
+            
+            let offset = 0;
+            function animateWave() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.strokeStyle = '#667EEA';
+                ctx.lineWidth = 3;
+                
+                for (let x = 0; x < canvas.width; x++) {
+                    const y = yOffset + amplitude * Math.sin(frequency * x + offset);
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                
+                ctx.stroke();
+                offset += 0.05;
+                requestAnimationFrame(animateWave);
+            }
+            
+            animateWave();
+        }
+    </script>
+</body>
+</html>

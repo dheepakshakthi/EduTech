@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from website import views
 
-from .views import (
+from website.views import (
     signup_api,
     login_api,
     dashboard_stats_api,
@@ -13,6 +13,8 @@ from .views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
+    path("auth/", views.auth, name="auth"),
+    path("dashboard/", views.dashboard, name="dashboard"),
 
     path("api/signup/", views.signup_api, name="signup_api"),
     path("api/login/", views.login_api, name="login_api"),

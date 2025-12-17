@@ -8,8 +8,16 @@ from django.utils.timezone import now
 from .models import User
 
 def index(request):
-    """View for the login page."""
+    """View for the home/landing page."""
     return render(request, 'index.html')
+
+def auth(request):
+    """View for the authentication (login/signup) page."""
+    return render(request, 'auth.html')
+
+def dashboard(request):
+    """View for the dashboard page."""
+    return render(request, 'dashboard.html')
 
 @csrf_exempt  # Disabling CSRF for this specific API task to make testing easier
 def signup_api(request):
