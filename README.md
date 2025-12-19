@@ -153,11 +153,3 @@ uv run manage.py shell
 ```bash
 uv run manage.py createsuperuser
 ```
-
-## License
-
-This project is for educational purposes.
-
-## Contributors
-
-- [dheepakshakthi](https://github.com/dheepakshakthi)
