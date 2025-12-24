@@ -174,11 +174,11 @@ def chatbot_api(request):
                 })
 
             payload = {
-                "model": "gemma",
+                "model": "gemma3:4b",
                 "prompt": f"Explain clearly:\n{user_message}",
                 "stream": False,
                 "options": {
-                    "num_gpu": 0,
+                    "num_gpu": 1,
                     "num_predict": 200  
                 }
             }

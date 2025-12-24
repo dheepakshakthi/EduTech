@@ -115,6 +115,36 @@ EduTech/
 7. **Access the application**
    Open your browser and navigate to `http://127.0.0.1:8000`
 
+## AI Chat Configuration
+
+To use the AI-powered chat feature, you must have Ollama installed and the correct model loaded.
+
+### CLI Setup
+1. **Install Ollama**: Download from [ollama.com](https://ollama.com).
+2. **Pull the Model**: Run the following command to download the Gemma model:
+   ```bash
+   ollama pull gemma3:4b
+   ```
+3. **Run the Server**: Ensure Ollama is running (default port 11434).
+   ```bash
+   ollama serve
+   ```
+
+### Client Usage
+You can also chat with the model directly from the command line to verify it works:
+```bash
+ollama run gemma3:4b
+```
+
+### Configuration in Code
+To change the model or inference device, modify the `chatbot_api` function in `website/views.py`:
+
+- **Model**: Update the `"model"` key in the `payload` dictionary (e.g., `"model": "llama3"`).
+- **GPU Acceleration**: Adjust `"num_gpu"` in the `"options"` dictionary:
+    - `0`: Use CPU only.
+    - `1`: Enable GPU acceleration (requires compatible hardware and Ollama configuration).
+- **Response Length**: Adjust `"num_predict"` to control the maximum number of tokens generated.
+
 ## API Endpoints
 
 | Endpoint | Method | Description |
