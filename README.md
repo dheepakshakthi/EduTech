@@ -9,6 +9,7 @@ An educational technology platform built with Django that provides personalized 
 - **Subject Management**: Browse and enroll in various subjects (Python, Maths, DBMS, etc.)
 - **Session Tracking**: Monitor your study sessions and time spent learning
 - **AI Recommendations**: Get personalized course recommendations based on your progress
+- **AI Chat History**: Save and manage multiple AI chat conversations with persistence
 
 ## Tech Stack
 
@@ -45,6 +46,8 @@ EduTech/
 - **Subject**: Available learning subjects with slug and title
 - **Session**: Tracks user learning sessions with subject and timestamps
 - **Recommendation**: Personalized course recommendations for users
+- **Conversation**: Stores metadata for AI chat sessions per user
+- **Message**: Individual chat messages (User/Assistant/System) within a conversation
 
 ## Installation
 
@@ -152,11 +155,15 @@ To change the model or inference device, modify the `chatbot_api` function in `w
 | `/` | GET | Landing page |
 | `/auth/` | GET | Authentication page (login/signup) |
 | `/dashboard/` | GET | User dashboard |
+| `/chatbot/` | GET | AI Chatbot interface |
 | `/api/signup/` | POST | User registration |
 | `/api/login/` | POST | User login |
 | `/api/dashboard/stats/` | GET | Dashboard statistics |
 | `/api/sessions/recent/` | GET | Recent learning sessions |
 | `/api/recommendations/` | GET | User recommendations |
+| `/api/chatbot/` | POST | Get AI response from Ollama |
+| `/api/conversations/` | GET/POST/DELETE | Manage chat history |
+| `/api/messages/` | GET | Load messages for a conversation |
 
 ## Usage
 
@@ -165,6 +172,7 @@ To change the model or inference device, modify the `chatbot_api` function in `w
 3. After registration, you'll be redirected to your personalized dashboard
 4. Browse available subjects and track your learning progress
 5. View recommendations tailored to your learning journey
+6. Access the **AI Chat** from the sidebar to ask questions and save your conversation history
 
 ## Development
 
