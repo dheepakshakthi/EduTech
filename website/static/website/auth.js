@@ -140,6 +140,9 @@ if (signinForm) {
                         loginTime: new Date().toISOString()
                     }));
                     
+                    // Store email in localStorage for chat persistence
+                    localStorage.setItem('userEmail', email);
+                    
                     // Redirect to dashboard
                     window.location.href = '/dashboard/';
                 } else {

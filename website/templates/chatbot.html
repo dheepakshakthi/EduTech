@@ -356,6 +356,84 @@
     cursor: pointer;
     font-weight: bold;
 }
+
+/* Conversations List Styles */
+.conversations-section {
+    flex: 1;
+    overflow-y: auto;
+    margin: 1rem 0;
+    max-height: 300px;
+}
+
+.conversations-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    padding: 0.5rem 1rem;
+    letter-spacing: 0.5px;
+}
+
+.conversations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.conversation-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    background: transparent;
+}
+
+.conversation-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.conversation-item.active {
+    background: rgba(255,255,255,0.2);
+}
+
+.conversation-title {
+    flex: 1;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rgba(255,255,255,0.9);
+}
+
+.conversation-delete {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: 0.2s;
+}
+
+.conversation-item:hover .conversation-delete {
+    opacity: 1;
+}
+
+.conversation-delete:hover {
+    background: rgba(255,0,0,0.3);
+    color: white;
+}
+
+.no-conversations {
+    font-size: 12px;
+    opacity: 0.6;
+    padding: 0.5rem 1rem;
+    font-style: italic;
+}
     </style>
 </head>
 
@@ -372,6 +450,14 @@
         <span class="plus">＋</span> New Chat
     </button>
 </div>
+
+        <!-- Conversations List -->
+        <div class="conversations-section">
+            <div class="conversations-label">Recent Conversations</div>
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations will be loaded here -->
+            </div>
+        </div>
 
        <a href="/dashboard/">
     <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">

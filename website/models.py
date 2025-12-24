@@ -54,3 +54,46 @@ class Session(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.user.name}"
+
+
+class Conversation(models.Model):
+    """Stores AI chat conversations for each user"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='conversations')
+    title = models.CharField(max_length=255, default='New Chat')
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'conversations'
+        ordering = ['-updated_at']
+        indexes = [
+            models.Index(fields=['user', '-updated_at'], name='idx_conv_user_updated'),
+        ]
+
+    def __str__(self):
+        return f"{self.title} - {self.user.name}"
+
+
+class Message(models.Model):
+    """Stores individual messages within a conversation"""
+    ROLE_CHOICES = [
+        ('user', 'User'),
+        ('assistant', 'Assistant'),
+        ('system', 'System'),
+    ]
+
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    content = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'messages'
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['conversation', 'created_at'], name='idx_msg_conv_created'),
+        ]
+
+    def __str__(self):
+        return f"{self.role}: {self.content[:50]}..."

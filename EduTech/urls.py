@@ -8,7 +8,9 @@ from website.views import (
     dashboard_stats_api,
     recent_sessions_api,
     recommendations_api,
-    chatbot_api
+    chatbot_api,
+    conversations_api,
+    messages_api
 )
 
 urlpatterns = [
@@ -24,4 +26,6 @@ urlpatterns = [
     path('api/sessions/recent/', recent_sessions_api),
     path('api/recommendations/', recommendations_api),
     path('api/chatbot/', chatbot_api),
+    path('api/conversations/', conversations_api, name='conversations_api'),
+    path('api/messages/', messages_api, name='messages_api'),
 ]

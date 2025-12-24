@@ -166,12 +166,30 @@ def chatbot_api(request):
         try:
             data = json.loads(request.body)
             user_message = data.get("message")
+            email = data.get("email")
+            conversation_id = data.get("conversation_id")
 
             if not user_message:
                 return JsonResponse({
                     "success": False,
                     "message": "Message is required"
                 })
+
+            # Get user and conversation if provided (for saving history)
+            user = None
+            conversation = None
+            if email:
+                user = User.objects.filter(email=email).first()
+                if user and conversation_id:
+                    conversation = Conversation.objects.filter(id=conversation_id, user=user).first()
+
+            # Save user message to database
+            if conversation:
+                Message.objects.create(
+                    conversation=conversation,
+                    role='user',
+                    content=user_message
+                )
 
             payload = {
                 "model": "gemma3:4b",
@@ -190,10 +208,24 @@ def chatbot_api(request):
             )
 
             result = response.json()
+            bot_response = result.get("response", "")
+
+            # Save assistant response to database
+            if conversation:
+                Message.objects.create(
+                    conversation=conversation,
+                    role='assistant',
+                    content=bot_response
+                )
+                # Update conversation title if it's the first message
+                if conversation.title == 'New Chat' and user_message:
+                    conversation.title = user_message[:50] + ('...' if len(user_message) > 50 else '')
+                    conversation.save()
 
             return JsonResponse({
                 "success": True,
-                "bot_response": result.get("response", "")
+                "bot_response": bot_response,
+                "conversation_id": conversation.id if conversation else None
             })
 
         except Exception as e:
@@ -201,4 +233,124 @@ def chatbot_api(request):
                 "success": False,
                 "message": str(e)
             })
+
+from .models import Conversation, Message
+
+
+@csrf_exempt
+def conversations_api(request):
+    """
+    GET: Load all conversations for a user
+    POST: Create a new conversation
+    DELETE: Delete a conversation
+    """
+    if request.method == 'GET':
+        try:
+            email = request.GET.get('email')
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({'success': False, 'message': 'User not found'})
+
+            conversations = Conversation.objects.filter(user=user, is_active=True)
+            
+            data = []
+            for conv in conversations:
+                data.append({
+                    'id': conv.id,
+                    'title': conv.title,
+                    'created_at': conv.created_at.isoformat(),
+                    'updated_at': conv.updated_at.isoformat()
+                })
+
+            return JsonResponse({'success': True, 'data': data})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            title = data.get('title', 'New Chat')
+
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({'success': False, 'message': 'User not found'})
+
+            conversation = Conversation.objects.create(user=user, title=title)
+
+            return JsonResponse({
+                'success': True,
+                'conversation_id': conversation.id,
+                'message': 'Conversation created'
+            })
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    elif request.method == 'DELETE':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            conversation_id = data.get('conversation_id')
+
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({'success': False, 'message': 'User not found'})
+
+            conversation = Conversation.objects.filter(id=conversation_id, user=user).first()
+            if not conversation:
+                return JsonResponse({'success': False, 'message': 'Conversation not found'})
+
+            # Soft delete
+            conversation.is_active = False
+            conversation.save()
+
+            return JsonResponse({'success': True, 'message': 'Conversation deleted'})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+def messages_api(request):
+    """
+    GET: Load all messages for a conversation
+    """
+    if request.method == 'GET':
+        try:
+            email = request.GET.get('email')
+            conversation_id = request.GET.get('conversation_id')
+
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({'success': False, 'message': 'User not found'})
+
+            conversation = Conversation.objects.filter(id=conversation_id, user=user).first()
+            if not conversation:
+                return JsonResponse({'success': False, 'message': 'Conversation not found'})
+
+            messages = Message.objects.filter(conversation=conversation)
+
+            data = []
+            for msg in messages:
+                data.append({
+                    'id': msg.id,
+                    'role': msg.role,
+                    'content': msg.content,
+                    'created_at': msg.created_at.isoformat()
+                })
+
+            return JsonResponse({
+                'success': True,
+                'conversation_id': conversation.id,
+                'title': conversation.title,
+                'data': data
+            })
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': 'Only GET allowed'})
 
