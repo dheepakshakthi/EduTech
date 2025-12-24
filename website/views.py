@@ -1,4 +1,5 @@
 import json
+import requests
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -6,6 +7,9 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 from django.utils.timezone import now
 from .models import User
+
+def chatbot_page(request):
+    return render(request, "chatbot.html")
 
 def index(request):
     """View for the home/landing page."""
@@ -148,6 +152,48 @@ def recommendations_api(request):
             return JsonResponse({
                 "success": True,
                 "data": recommendations
+            })
+
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "message": str(e)
+            })
+
+@csrf_exempt
+def chatbot_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            user_message = data.get("message")
+
+            if not user_message:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Message is required"
+                })
+
+            payload = {
+                "model": "gemma",
+                "prompt": f"Explain clearly:\n{user_message}",
+                "stream": False,
+                "options": {
+                    "num_gpu": 0,
+                    "num_predict": 200  
+                }
+            }
+
+            response = requests.post(
+                "http://localhost:11434/api/generate",
+                json=payload,
+                timeout=60
+            )
+
+            result = response.json()
+
+            return JsonResponse({
+                "success": True,
+                "bot_response": result.get("response", "")
             })
 
         except Exception as e:

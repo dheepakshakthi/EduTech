@@ -7,7 +7,8 @@ from website.views import (
     login_api,
     dashboard_stats_api,
     recent_sessions_api,
-    recommendations_api
+    recommendations_api,
+    chatbot_api
 )
 
 urlpatterns = [
@@ -15,10 +16,12 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("auth/", views.auth, name="auth"),
     path("dashboard/", views.dashboard, name="dashboard"),
+    path("chatbot/", views.chatbot_page, name="chatbot"),
 
     path("api/signup/", views.signup_api, name="signup_api"),
     path("api/login/", views.login_api, name="login_api"),
     path('api/dashboard/stats/', dashboard_stats_api),
     path('api/sessions/recent/', recent_sessions_api),
     path('api/recommendations/', recommendations_api),
+    path('api/chatbot/', chatbot_api),
 ]
