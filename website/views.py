@@ -370,31 +370,180 @@ def today_mission_api(request):
             "today_mission": mission
         })
 
-from datetime import date
+from datetime import date, timedelta
+from .models import StudyStreak
+from django.db.models import Sum
+
 def study_streak_api(request):
     if request.method == "GET":
-        streak_data = {
-            "current_streak_days": 6,
-            "longest_streak_days": 14,
-            "last_active_date": date.today().isoformat(),
-            "streak_message": "You are on a 6-day learning streak. Keep going!"
-        }
+        try:
+            email = request.GET.get('email')
+            if not email:
+                return JsonResponse({"success": False, "message": "Email required"})
+            
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({"success": False, "message": "User not found"})
+            
+            # Calculate current streak
+            today = date.today()
+            current_streak = 0
+            check_date = today - timedelta(days=1)  # Start from yesterday
+            
+            while True:
+                streak_record = StudyStreak.objects.filter(
+                    user=user, 
+                    study_date=check_date,
+                    minutes_studied__gt=0
+                ).first()
+                
+                if streak_record:
+                    current_streak += 1
+                    check_date -= timedelta(days=1)
+                else:
+                    break
+            
+            # Calculate longest streak
+            all_streaks = StudyStreak.objects.filter(
+                user=user,
+                minutes_studied__gt=0
+            ).order_by('study_date')
+            
+            longest_streak = 0
+            temp_streak = 0
+            prev_date = None
+            
+            for streak in all_streaks:
+                if prev_date and (streak.study_date - prev_date).days == 1:
+                    temp_streak += 1
+                else:
+                    temp_streak = 1
+                
+                longest_streak = max(longest_streak, temp_streak)
+                prev_date = streak.study_date
+            
+            # Get last 7 days of data for chart
+            weekly_data = []
+            for i in range(6, -1, -1):
+                check_date = today - timedelta(days=i)
+                streak_record = StudyStreak.objects.filter(
+                    user=user,
+                    study_date=check_date
+                ).first()
+                
+                day_name = check_date.strftime('%a')
+                if i == 0:
+                    day_name = 'Today'
+                
+                weekly_data.append({
+                    "day": day_name,
+                    "minutes": streak_record.minutes_studied if streak_record else 0,
+                    "date": check_date.isoformat()
+                })
+            
+            # Get last active date
+            last_active = StudyStreak.objects.filter(
+                user=user,
+                minutes_studied__gt=0
+            ).order_by('-study_date').first()
+            
+            last_active_date = last_active.study_date.isoformat() if last_active else today.isoformat()
+            
+            streak_data = {
+                "current_streak_days": current_streak,
+                "longest_streak_days": longest_streak,
+                "last_active_date": last_active_date,
+                "weekly_data": weekly_data,
+                "streak_message": f"You are on a {current_streak}-day learning streak. Keep going!" if current_streak > 0 else "Start your streak today!"
+            }
 
-        return JsonResponse({
-            "success": True,
-            "study_streak": streak_data
-        })
+            return JsonResponse({
+                "success": True,
+                "study_streak": streak_data
+            })
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "message": str(e)
+            })
+
+from .models import FocusSession
+from django.db.models import Avg
 
 def focus_analysis_api(request):
     if request.method == "GET":
-        focus_data = {
-            "preferred_study_time": "Evening (7 PM – 9 PM)",
-            "average_session_minutes": 42,
-            "focus_score": "High",
-            "focus_message": "You learn best in the evening with longer focused sessions."
-        }
+        try:
+            email = request.GET.get('email')
+            if not email:
+                return JsonResponse({"success": False, "message": "Email required"})
+            
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return JsonResponse({"success": False, "message": "User not found"})
+            
+            # Get all focus sessions for this user
+            sessions = FocusSession.objects.filter(user=user)
+            
+            if not sessions.exists():
+                return JsonResponse({
+                    "success": True,
+                    "focus_analysis": {
+                        "preferred_study_time": "No data yet",
+                        "average_session_minutes": 0,
+                        "focus_score": "N/A",
+                        "focus_message": "Complete some study sessions to see your focus analysis."
+                    }
+                })
+            
+            # Calculate average session duration
+            avg_duration = sessions.aggregate(Avg('duration_minutes'))['duration_minutes__avg']
+            avg_duration = round(avg_duration) if avg_duration else 0
+            
+            # Calculate average focus score
+            avg_score = sessions.aggregate(Avg('focus_score'))['focus_score__avg']
+            avg_score = round(avg_score, 1) if avg_score else 0
+            
+            # Determine focus score category
+            if avg_score >= 8:
+                focus_category = "High"
+            elif avg_score >= 6:
+                focus_category = "Medium"
+            else:
+                focus_category = "Low"
+            
+            # Find preferred study time (hour with most sessions)
+            time_distribution = {}
+            for session in sessions:
+                hour = session.start_time.hour
+                time_distribution[hour] = time_distribution.get(hour, 0) + 1
+            
+            if time_distribution:
+                preferred_hour = max(time_distribution, key=time_distribution.get)
+                
+                # Convert to time period
+                if 5 <= preferred_hour < 12:
+                    time_period = f"Morning ({preferred_hour} AM – {preferred_hour + 2} AM)"
+                elif 12 <= preferred_hour < 17:
+                    time_period = f"Afternoon ({preferred_hour % 12 or 12} PM – {(preferred_hour + 2) % 12 or 12} PM)"
+                else:
+                    time_period = f"Evening ({preferred_hour % 12 or 12} PM – {(preferred_hour + 2) % 12 or 12} PM)"
+            else:
+                time_period = "No preference detected"
+            
+            focus_data = {
+                "preferred_study_time": time_period,
+                "average_session_minutes": avg_duration,
+                "focus_score": focus_category,
+                "focus_score_value": avg_score,
+                "focus_message": f"You typically focus best around {preferred_hour % 12 or 12}:00 {'PM' if preferred_hour >= 12 else 'AM'}. Try to start your session before then today."
+            }
 
-        return JsonResponse({
-            "success": True,
-            "focus_analysis": focus_data
-        })
+            return JsonResponse({
+                "success": True,
+                "focus_analysis": focus_data
+            })
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "message": str(e)
+            })

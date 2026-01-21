@@ -1,1257 +1,1476 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Learning Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #0A2472;
+      --primary-light: #e6ebf8;
+      --primary-soft: #f1f4fb;
+      --primary-border: #c7d2eb;
+      --primary-hover: #081d5c;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    :root {
-      --primary-color: #0a2472;
-      --secondary-color: #667eea;
-      --accent-color: #ffd93d;
-      --text-dark: #111827;
-      --text-muted: #6b7280;
-      --bg-page: #f5f7fb;
-      --bg-sidebar: #0a2472;
-      --bg-card: #ffffff;
-      --border-soft: #e5e7eb;
-      --radius-lg: 18px;
-      --radius-pill: 999px;
-      --transition-fast: 0.2s ease;
-
-      --sidebar-width-collapsed: 76px;
-      --sidebar-width-expanded: 260px;
     }
 
     body {
-      background: var(--bg-page);
-      color: var(--text-dark);
-      min-height: 100vh;
-      display: flex;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background-color: #f9fafb;
+      color: #111827;
+      line-height: 1.6;
     }
 
-    .dashboard-page {
-      display: flex;
-      width: 100%;
-      min-height: 100vh;
-      position: relative;
-    }
-
-    /* SIDEBAR */
     .sidebar {
       position: fixed;
-      inset: 0 auto 0 0;
-      width: var(--sidebar-width-expanded);
+      left: 0;
+      top: 0;
       height: 100vh;
-      background: linear-gradient(160deg, rgba(15, 23, 42, 0.97), rgba(15, 23, 42, 0.9));
-      border-right: 1px solid rgba(148, 163, 184, 0.25);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      transition: width var(--transition-fast);
+      width: 256px;
+      background-color: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
       z-index: 1000;
-      overflow: hidden; 
     }
 
-    .sidebar.collapsed {
-      width: var(--sidebar-width-collapsed);
-    }
-
-    .sidebar-header {
+    .profile-section {
+      padding: 24px;
+      border-bottom: 1px solid #e5e7eb;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 1.25rem 1rem;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
-      height: 80px;
-    }
-
-    .sidebar-toggle {
-      background: rgba(15, 23, 42, 0.7);
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #e5e7eb;
+      gap: 12px;
       cursor: pointer;
-      transition: background var(--transition-fast), transform var(--transition-fast);
-      font-size: 1rem;
+      transition: background-color 0.2s;
     }
 
-    .sidebar-toggle:hover {
-      background: rgba(30, 64, 175, 0.85);
-      transform: scale(1.05);
+    .profile-section:hover {
+      background-color: #f9fafb;
     }
 
-    .sidebar nav {
-      flex: 1;
-      padding: 1.5rem 0.75rem;
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
       display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .profile-name {
+      font-weight: 600;
+      color: #111827;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+
+    .profile-level {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .nav-menu {
+      flex: 1;
+      padding: 16px;
+    }
+
+    .nav-menu ul {
+      list-style: none;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      color: #94a3b8;
-      padding: 0.75rem 1rem;
-      border-radius: 14px;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 15px;
+      position: relative;
       text-decoration: none;
-      font-size: 0.95rem;
-      transition: all var(--transition-fast);
-      white-space: nowrap;
-      overflow: hidden;
     }
 
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
+      background-color: #f3f4f6;
     }
 
     .nav-item.active {
-      background: linear-gradient(120deg, #4f46e5, #6366f1);
-      color: white;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+      background-color: var(--primary-soft);
+      color: var(--primary);
     }
 
     .nav-icon {
-      width: 24px;
-      height: 24px;
-      min-width: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-icon svg {
       width: 20px;
       height: 20px;
-      fill: currentColor;
+      flex-shrink: 0;
     }
 
-    .nav-label {
-      opacity: 1;
-      transform: translateX(0);
-      transition: all var(--transition-fast);
-    }
-
-    .sidebar.collapsed .nav-label {
-      opacity: 0;
-      transform: translateX(-10px);
-    }
-
-    /* Sidebar profile */
-    .sidebar-profile {
-      border-top: 1px solid rgba(148, 163, 184, 0.25);
-      padding: 1rem;
-    }
-
-    .profile-button {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 999px;
-      padding: 0.5rem;
-      border: 1px solid transparent;
-      color: #e5e7eb;
-      cursor: pointer;
-      overflow: hidden;
-      transition: var(--transition-fast);
-    }
-
-    .profile-button:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .profile-avatar {
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
+    .nav-item .badge {
+      margin-left: auto;
+      width: 8px;
+      height: 8px;
+      background-color: var(--primary);
       border-radius: 50%;
-      background: linear-gradient(135deg, #f97316, #ef4444);
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
+      gap: 8px;
+    }
+
+    .logout-btn:hover {
+      background-color: #fecaca;
+    }
+
+    .sidebar-footer p {
+      font-size: 12px;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .main-content {
+      margin-left: 256px;
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .welcome-header {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      border: 1px solid #f3f4f6;
+      margin-bottom: 32px;
+    }
+
+    .welcome-title {
+      font-size: 30px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .welcome-subtitle {
+      color: #4b5563;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .highlight {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .highlight-course {
+      font-weight: 600;
+    }
+
+    .welcome-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .meta-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .mission-card {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(10, 36, 114, 0.3);
       color: white;
     }
 
-    .profile-meta {
+    .mission-header {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      white-space: nowrap;
-      transition: all var(--transition-fast);
-      opacity: 1;
-      width: auto;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
     }
 
-    .sidebar.collapsed .profile-meta {
-      opacity: 0;
-      width: 0;
-    }
-
-    .profile-name {
-      font-size: 0.9rem;
+    .mission-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
       font-weight: 600;
+      margin-bottom: 8px;
     }
 
-    .profile-email {
-      font-size: 0.75rem;
-      color: #94a3b8;
+    .mission-icon {
+      width: 24px;
+      height: 24px;
     }
 
-    /* Global profile dropdown (outside sidebar) */
-    .profile-dropdown {
-      position: fixed;
-      bottom: 1.5rem;
-      left: var(--sidebar-width-collapsed);
-      transform: translateX(8px);
-      min-width: 240px;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
-      border: 1px solid var(--border-soft);
+    .mission-subtitle {
+      color: #e0e7ff;
+      font-size: 14px;
+    }
+
+    .mission-count {
+      text-align: right;
+    }
+
+    .count-number {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .count-number.orange {
+      color: #fb923c;
+    }
+
+    .count-label {
+      font-size: 12px;
+      color: #e0e7ff;
+    }
+
+    .progress-container {
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
       overflow: hidden;
-      display: none;
-      color: var(--text-dark);
-      z-index: 2000;
+      margin-bottom: 16px;
     }
 
-    .profile-dropdown.show {
-      display: block;
+    .progress-bar {
+      height: 100%;
+      background-color: white;
+      border-radius: 9999px;
+      transition: width 0.5s ease;
     }
 
-    /* when sidebar expanded, align to expanded width */
-    .sidebar:not(.collapsed) ~ .profile-dropdown {
-      left: var(--sidebar-width-expanded);
+    .task-list {
+      list-style: none;
     }
 
-    .pd-header {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--border-soft);
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-    }
-
-    .pd-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #2563eb;
+    .task-item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: 600;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 15px;
     }
 
-    .pd-text {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-      font-size: 0.85rem;
+    .task-item:last-child {
+      margin-bottom: 0;
     }
 
-    .pd-text .email {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    .pd-menu {
-      padding: 0.5rem 0;
-    }
-
-    .pd-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.55rem 1rem;
-  cursor: pointer;
-  font-size: 0.88rem;
-  transition: background var(--transition-fast);
-  text-decoration: none;
-  color: inherit;
-}
-
-.pd-item:hover {
-  background: #f3f4ff;
-}
-    .pd-icon {
+    .task-icon {
       width: 20px;
       height: 20px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .pd-icon svg {
-      width: 18px;
-      height: 18px;
-      fill: none;
-      stroke: #4b5563;
-      stroke-width: 1.7;
+    .task-icon.incomplete {
+      opacity: 0.5;
     }
 
-    .pd-item.logout {
-      border-top: 1px solid var(--border-soft);
-      margin-top: 0.3rem;
-      padding-top: 0.6rem;
-      color: #dc2626;
+    .task-item.completed span {
+      text-decoration: line-through;
+      color: #e0e7ff;
     }
 
-    .pd-item.logout svg {
-      stroke: #dc2626;
+    .streak-card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      border: 1px solid #f3f4f6;
     }
 
-    /* MAIN */
-    .dashboard-main {
-      flex: 1;
-      margin-left: var(--sidebar-width-expanded);
-      padding: 1.75rem 2rem 2rem;
-      transition: margin-left var(--transition-fast);
-    }
-
-    .sidebar.collapsed ~ .dashboard-main {
-      margin-left: var(--sidebar-width-collapsed);
-    }
-
-    .dashboard-header {
+    .streak-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.75rem;
+      align-items: start;
+      margin-bottom: 24px;
     }
 
-    .greeting h1 {
-      font-size: 1.6rem;
+    .streak-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
       font-weight: 600;
-      color: var(--primary-color);
+      margin-bottom: 4px;
+      color: #111827;
     }
 
-    .greeting h1 span {
-      color: var(--secondary-color);
+    .streak-icon {
+      width: 24px;
+      height: 24px;
+      color: #f97316;
     }
 
-    .greeting p {
-      font-size: 0.92rem;
-      color: var(--text-muted);
-      margin-top: 0.2rem;
+    .streak-subtitle {
+      font-size: 14px;
+      color: #6b7280;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+    .streak-count {
+      text-align: right;
     }
 
-    .badge-soft {
-      font-size: 0.8rem;
-      padding: 0.25rem 0.7rem;
-      border-radius: var(--radius-pill);
-      background: #e5edff;
-      color: var(--primary-color);
-      border: 1px solid #c7d2fe;
+    .streak-badge {
+      padding: 12px;
+      background-color: #fff7ed;
+      border-radius: 8px;
+      border: 1px solid #fed7aa;
+      margin-bottom: 16px;
     }
 
-    /* HERO */
-    .dashboard-hero {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
-      gap: 1.2rem;
-      margin-bottom: 1.8rem;
-    }
-
-    .hero-left {
-      background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      padding: 1.35rem 1.4rem;
-      border: 1px solid var(--border-soft);
-      display: flex;
-      align-items: center;
-      gap: 1.3rem;
-      box-shadow: 0 6px 18px rgba(148, 163, 184, 0.3);
-    }
-
-    .study-illustration svg {
-      max-width: 120px;
-      height: auto;
-    }
-
-    .hero-left-content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .hero-label {
-      font-size: 0.75rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--secondary-color);
-    }
-
-    .hero-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary-color);
-    }
-
-    .hero-desc {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
-
-    .hero-tags {
-      margin-top: 0.25rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
-    .hero-tag {
-      font-size: 0.75rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: var(--radius-pill);
-      background: #eef2ff;
-      color: var(--primary-color);
-    }
-
-    .hero-right {
-      background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.3rem;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 6px 18px rgba(148, 163, 184, 0.3);
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .hero-right-title {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-
-    .hero-streak {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--primary-color);
-    }
-
-    .hero-subtitle {
-      font-size: 0.86rem;
-      color: var(--text-muted);
-    }
-
-    .hero-progress-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.8rem;
-      margin-top: 0.4rem;
-    }
-
-    .hero-progress-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .hero-progress-bar {
-      flex: 1;
-      height: 7px;
-      border-radius: var(--radius-pill);
-      background: #e5edff;
-      overflow: hidden;
-    }
-
-    .hero-progress-fill {
-      height: 100%;
-      width: 68%;
-      background: linear-gradient(90deg, #4f46e5, #22c55e);
-    }
-
-    .hero-kpi {
-      display: flex;
-      gap: 0.65rem;
-      margin-top: 0.5rem;
-    }
-
-    .hero-kpi-item {
-      flex: 1;
-      border-radius: 12px;
-      border: 1px solid var(--border-soft);
-      padding: 0.5rem 0.7rem;
-      background: #f9fafb;
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .hero-kpi-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .hero-kpi-value {
-      font-size: 0.9rem;
+    .streak-badge p {
+      font-size: 14px;
+      color: #9a3412;
       font-weight: 500;
-      color: var(--primary-color);
     }
 
-    /* SUBJECTS */
-    .subjects-section {
-      margin-bottom: 1.8rem;
+    .chart-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 96px;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .chart-bar {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+    }
+
+    .bar {
+      width: 100%;
+      background-color: #f3f4f6;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.3s ease;
+    }
+
+    .bar.active {
+      background: linear-gradient(to top, var(--primary), var(--primary-hover));
+    }
+
+    .bar-label {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .bar-label.active {
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .focus-analysis {
+      padding-top: 16px;
+      border-top: 1px solid #f3f4f6;
+      display: flex;
+      align-items: start;
+      gap: 8px;
+    }
+
+    .focus-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .focus-analysis p {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .focus-time {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .courses-section {
+      margin-bottom: 32px;
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.85rem;
+      margin-bottom: 16px;
     }
 
-    .section-header h2 {
-      font-size: 1.05rem;
+    .section-title {
+      font-size: 24px;
       font-weight: 600;
-      color: var(--primary-color);
+      color: #111827;
     }
 
-    .section-header p {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .subjects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1rem;
-    }
-
-    .subject-card {
-      background: var(--bg-card);
-      border-radius: 16px;
-      padding: 1rem 1.05rem;
-      border: 1px solid var(--border-soft);
+    .view-all-btn {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      box-shadow: 0 4px 14px rgba(148, 163, 184, 0.25);
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      color: var(--primary);
     }
 
-    .subject-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(148, 163, 184, 0.45);
+    .view-all-btn:hover {
+      color: var(--primary-hover);
+      background-color: var(--primary-soft);
+    }
+
+    .course-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .course-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-card.active {
       border-color: #c7d2fe;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    .subject-chip-row {
+    .course-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      align-items: start;
+      margin-bottom: 12px;
     }
 
-    .subject-tag {
-      padding: 0.25rem 0.6rem;
-      border-radius: var(--radius-pill);
-      background: #eef2ff;
-      color: var(--primary-color);
-      font-size: 0.78rem;
-    }
-
-    .subject-title {
-      font-size: 1rem;
+    .course-title {
+      font-size: 18px;
       font-weight: 600;
-      color: var(--primary-color);
+      color: #111827;
     }
 
-    .subject-desc {
-      font-size: 0.86rem;
-      color: var(--text-muted);
+    .difficulty-badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      border: 1px solid;
     }
 
-    .subject-meta-row {
+    .difficulty-easy {
+      background-color: #dcfce7;
+      color: #15803d;
+      border-color: #bbf7d0;
+    }
+
+    .difficulty-medium {
+      background-color: #fed7aa;
+      color: #c2410c;
+      border-color: #fdba74;
+    }
+
+    .difficulty-hard {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .course-progress {
+      margin-bottom: 16px;
+    }
+
+    .progress-label {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-top: 0.4rem;
-      gap: 0.8rem;
+      margin-bottom: 8px;
     }
 
-    .subject-progress-line {
-      flex: 1;
-      height: 5px;
-      border-radius: var(--radius-pill);
-      background: #e5edff;
+    .progress-label span:first-child {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .progress-label span:last-child {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .course-progress-bar {
+      height: 8px;
+      background-color: #f3f4f6;
+      border-radius: 9999px;
       overflow: hidden;
     }
 
-    .subject-progress-line-fill {
+    .course-progress-fill {
       height: 100%;
-      width: var(--value, 50%);
-      background: linear-gradient(90deg, #4f46e5, #22c55e);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
     }
 
-    .subject-pill {
-      font-size: 0.78rem;
-      color: #111827;
-      padding: 0.22rem 0.7rem;
-      border-radius: var(--radius-pill);
-      background: #fef3c7;
-      border: 1px solid #fde68a;
+    .progress-easy {
+      background: linear-gradient(to right, #4ade80, #22c55e);
     }
 
-    /* PANELS */
-    .panels-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.3fr) minmax(0, 1.5fr);
-      gap: 1rem;
+    .progress-medium {
+      background: linear-gradient(to right, #fb923c, #f97316);
     }
 
-    .panel {
-      background: var(--bg-card);
+    .progress-hard {
+      background: linear-gradient(to right, #f87171, #ef4444);
+    }
+
+    .course-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .lessons-left {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .continue-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: var(--primary);
+    }
+
+    .continue-btn:hover {
+      color: var(--primary-hover);
+      background-color: var(--primary-soft);
+    }
+
+    .continue-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .performance-card {
+      background: linear-gradient(135deg, var(--primary-soft), #ffffff);
+      border: 1px solid var(--primary-border);
       border-radius: 16px;
-      border: 1px solid var(--border-soft);
-      padding: 1rem 1.05rem;
-      box-shadow: 0 5px 16px rgba(148, 163, 184, 0.3);
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+      padding: 24px;
+      margin-bottom: 32px;
     }
 
-    .panel-header {
+    .performance-header {
       display: flex;
-      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ai-icon-wrapper {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary-soft);
+      border-radius: 8px;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .panel-title {
-      font-size: 0.95rem;
+    .ai-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+    }
+
+    .performance-title-section {
+      flex: 1;
+    }
+
+    .performance-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .performance-title-row h3 {
       font-weight: 600;
-      color: var(--primary-color);
+      color: #111827;
+      font-size: 16px;
     }
 
-    .panel-help {
-      font-size: 0.78rem;
-      color: var(--text-muted);
+    .ai-badge {
+      font-size: 11px;
+      background-color: var(--primary-soft);
+      color: var(--primary-hover);
+      padding: 2px 8px;
+      border-radius: 9999px;
     }
 
-    .overview-grid {
+    .performance-text {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .highlight-skill {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .highlight-improve {
+      font-weight: 600;
+      color: #ea580c;
+    }
+
+    .stats-container {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.6rem;
-      margin-top: 0.2rem;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #c7d2fe;
     }
 
-    .overview-item {
-      border-radius: 12px;
-      background: #f9fafb;
-      border: 1px solid var(--border-soft);
-      padding: 0.6rem 0.7rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-      font-size: 0.82rem;
+    .stat-item {
+      text-align: center;
     }
 
-    .overview-label {
-      color: var(--text-muted);
+    .stat-item.bordered {
+      border-left: 1px solid #c7d2fe;
+      border-right: 1px solid #c7d2fe;
     }
 
-    .overview-value {
-      font-size: 0.96rem;
-      font-weight: 600;
-      color: var(--primary-color);
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
     }
 
-    .overview-sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .data-stats {
+    .stat-value-row {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      justify-content: center;
+      gap: 4px;
     }
 
-    .circular-progress svg {
-      filter: drop-shadow(0 8px 16px rgba(79, 70, 229, 0.55));
+    .trend-icon {
+      width: 16px;
+      height: 16px;
+      color: #16a34a;
     }
 
-    .ranking-box {
-      border-radius: 14px;
-      border: 1px solid var(--border-soft);
-      padding: 0.7rem 0.8rem;
-      background: #f9fafb;
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .recommendations-card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      border: 1px solid #f3f4f6;
+    }
+
+    .recommendations-header {
       display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      min-width: 100px;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
     }
 
-    .rank-number {
-      font-size: 1.3rem;
+    .recommendations-header h2 {
+      font-size: 20px;
       font-weight: 600;
-      color: var(--primary-color);
+      color: #111827;
     }
 
-    .rank-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .sparkle-icon,
+    .sparkle-icon-small {
+      color: var(--primary);
+      width: 20px;
+      height: 20px;
     }
 
-    .progress-detail {
-      margin-top: 0.4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .progress-item {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .progress-note {
-      font-size: 0.78rem;
-      color: var(--secondary-color);
-      margin-top: 0.1rem;
+    .sparkle-icon-small {
+      width: 14px;
+      height: 14px;
     }
 
     .recommendations-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      margin-bottom: 16px;
     }
 
     .recommendation-item {
       display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      padding: 0.55rem 0.6rem;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
       border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 16px;
       cursor: pointer;
-      transition: background var(--transition-fast), transform var(--transition-fast);
+      transition: all 0.3s;
+    }
+
+    .recommendation-item:last-child {
+      margin-bottom: 0;
     }
 
     .recommendation-item:hover {
-      background: #f3f4ff;
-      transform: translateY(-2px);
+      border-color: var(--primary-border);
+      background-color: var(--primary-soft);
     }
 
-    .rec-icon {
+    .recommendation-item:hover .arrow-btn {
+      opacity: 1;
+    }
+
+    .recommendation-content {
+      flex: 1;
+    }
+
+    .recommendation-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .recommendation-title-row h4 {
+      font-weight: 600;
+      color: #111827;
+      font-size: 15px;
+    }
+
+    .recommendation-desc {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .recommendation-reason {
+      font-size: 12px;
+      color: var(--primary);
+      background-color: var(--primary-soft);
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .arrow-btn {
       width: 32px;
       height: 32px;
-      border-radius: 999px;
-      background: #eef2ff;
+      background-color: var(--primary-soft);
+      color: var(--primary);
+      border: none;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: all 0.3s;
     }
 
-    .rec-icon svg {
-      width: 18px;
-      height: 18px;
-      fill: #4b5563;
+    .arrow-btn:hover {
+      background-color: var(--primary-light);
     }
 
-    .rec-content h4 {
-      font-size: 0.9rem;
-      color: var(--primary-color);
-      margin-bottom: 0.1rem;
+    .arrow-btn svg {
+      width: 16px;
+      height: 16px;
     }
 
-    .rec-content p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .view-all-recommendations {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--primary);
+      background: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
 
-    /* RESPONSIVE */
+    .view-all-recommendations:hover {
+      background-color: var(--primary-soft);
+    }
+
     @media (max-width: 1024px) {
-      .panels-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .grid-2 {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 480px) {
-      .subjects-grid {
-        grid-template-columns: minmax(0, 1fr);
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 16px;
+      }
+
+      .welcome-title {
+        font-size: 24px;
+      }
+
+      .mission-title,
+      .streak-title,
+      .recommendations-header h2 {
+        font-size: 18px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="dashboard-page">
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  <aside class="sidebar">
+    <div class="profile-section" onclick="goToProfile()">
+      <div class="profile-avatar" id="sidebarAvatar">U</div>
+      <div class="profile-info">
+        <h3 class="profile-name" id="sidebarName">User</h3>
+        <p class="profile-level">Intermediate</p>
       </div>
+    </div>
 
-      <nav>
-        <a href="#" class="nav-item active">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-          </span>
-          <span class="nav-label">Dashboard</span>
-        </a>
-        <a href="#" class="nav-item">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9z"/></svg>
-          </span>
-          <span class="nav-label">My Courses</span>
-        </a>
-        <a href="#" class="nav-item">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5v16h14z"/></svg>
-          </span>
-          <span class="nav-label">Schedule</span>
-        </a>
-        <a href="/chatbot/" class="nav-item">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4v20l4-4h12z"/></svg>
-          </span>
-          <span class="nav-label">AI Chat</span>
-        </a>
-      </nav>
+    <nav class="nav-menu">
+      <ul>
+        <li class="nav-item active">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span>Dashboard</span>
+        </li>
+        <li class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          <span>My Courses</span>
+        </li>
+        <li class="nav-item" onclick="goToAIChat()">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          <span>AI Chat</span>
+          <span class="badge"></span>
+        </li>
+        <li class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span>Performance</span>
+        </li>
+        <li class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>Settings</span>
+        </li>
+      </ul>
+    </nav>
 
-      <div class="sidebar-profile">
-        <div class="profile-button" id="profileButton">
-          <div class="profile-avatar" id="sidebarAvatar">U</div>
-          <div class="profile-meta">
-            <div class="profile-name" id="sidebarName">User</div>
-            <div class="profile-email" id="sidebarEmail">user@email.com</div>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span>Logout</span>
+      </button>
+      <p>Stay consistent. Small daily progress leads to big results.</p>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Welcome header -->
+      <section class="welcome-header">
+        <h1 class="welcome-title">Good evening, <span id="userName">User</span> 👋</h1>
+        <p class="welcome-subtitle">
+          You're <span class="highlight">2 lessons</span> away from completing
+          <span class="highlight-course">Python Basics</span>.
+        </p>
+        <div class="welcome-meta">
+          <div class="meta-item">
+            <span class="status-dot"></span>
+            <span>Daily goal: 30 minutes • On track</span>
+          </div>
+          <div class="meta-item">
+            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Last session: Yesterday • 8:10 PM</span>
           </div>
         </div>
-      </div>
-    </aside>
+      </section>
 
-    <!-- Global profile dropdown (outside sidebar to avoid clipping) -->
-<div class="profile-dropdown" id="profileDropdown">
-  <div class="pd-header">
-    <div class="pd-avatar" id="pdAvatar">U</div>
-    <div class="pd-text">
-      <span class="name" id="pdName">User</span>
-      <span class="email" id="pdEmail">user@email.com</span>
-    </div>
-  </div>
-  <div class="pd-menu">
-    <!-- My Profile row  -->
-    <a href="pfp.html" class="pd-item">
-      <div class="pd-icon">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="8" r="3.5"></circle>
-          <path d="M6 19c0-3 2.2-5 6-5s6 2 6 5"></path>
-        </svg>
-      </div>
-      <span>My Profile</span>
-    </a>
-      
-    <div class="pd-item">
-      <div class="pd-icon">
-        <svg viewBox="0 0 24 24">
-          <circle cx="6" cy="7" r="2"></circle>
-          <circle cx="12" cy="12" r="2"></circle>
-          <circle cx="18" cy="17" r="2"></circle>
-          <path d="M8 7h10M10 12h8M4 17h8"></path>
-        </svg>
-      </div>
-      <span>Personalization</span>
-    </div>
+      <!-- Mission + Streak -->
+      <section class="grid-2">
+        <!-- Today's Mission -->
+        <article class="mission-card">
+          <div class="mission-header">
+            <div>
+              <div class="mission-title">
+                <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 13l4 4L19 7" />
+                </svg>
+                Today's mission
+              </div>
+              <p class="mission-subtitle">
+                Intermediate track • Focus on active learning, not just watching.
+              </p>
+            </div>
+            <div class="mission-count">
+              <div class="count-number orange" id="missionCount">0/3</div>
+              <div class="count-label">tasks completed</div>
+            </div>
+          </div>
 
-    <div class="pd-item">
-      <div class="pd-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
-          <path d="M19.4 14a1 1 0 0 0 .2-1.1l-1-1.7a6.2 6.2 0 0 0 .1-1.4l1-1.7a1 1 0 0 0-.2-1.1l-1.4-1.4a1 1 0 0 0-1.1-.2l-1.7 1a6.2 6.2 0 0 0-1.4-.1l-1.7-1a1 1 0 0 0-1.1.2L8 5.4a1 1 0 0 0-.2 1.1l1 1.7a6.2 6.2 0 0 0-.1 1.4l-1 1.7a1 1 0 0 0 .2 1.1l1.4 1.4a1 1 0 0 0 1.1.2l1.7-1a6.2 6.2 0 0 0 1.4.1l1.7 1a1 1 0 0 0 1.1-.2z"></path>
-        </svg>
-      </div>
-      <span>Settings</span>
-    </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="missionProgress" style="width: 0%;"></div>
+          </div>
 
-    <div class="pd-item">
-      <div class="pd-icon">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="18" r="1"></circle>
-          <path d="M12 6a4 4 0 0 0-4 4h2a2 2 0 1 1 2 2v2"></path>
-        </svg>
-      </div>
-      <span>Help &amp; Support</span>
-    </div>
+          <ul class="task-list">
+            <li class="task-item">
+              <input class="task-icon" type="checkbox" data-task />
+              <span>Watch 1 Python video</span>
+            </li>
+            <li class="task-item">
+              <input class="task-icon" type="checkbox" data-task />
+              <span>Complete 3 practice questions</span>
+            </li>
+            <li class="task-item">
+              <input class="task-icon" type="checkbox" data-task />
+              <span>Review yesterday's notes for 10 minutes</span>
+            </li>
+          </ul>
+        </article>
 
-    <div class="pd-item logout" onclick="logout()">
-      <div class="pd-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"></path>
-          <path d="M15 17l5-5-5-5"></path>
-          <path d="M20 12H9"></path>
-        </svg>
-      </div>
-      <span>Logout</span>
-    </div>
-  </div>
-</div>
+        <!-- Study streak -->
+        <article class="streak-card">
+          <div class="streak-header">
+            <div>
+              <div class="streak-title">
+                <svg class="streak-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v2.25M6.364 5.636l1.591 1.591M4.5 12H6.75M17.636 7.227l1.591-1.591M17.25 12H19.5M12 17.25V21M7.05 16.95l1.591-1.591M15.359 15.359l1.591 1.591" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8.5 14.5A3.5 3.5 0 0112 11h0a3.5 3.5 0 013.5 3.5c0 1.933-1.567 3.5-3.5 3.5S8.5 16.433 8.5 14.5z" />
+                </svg>
+                Study streak
+              </div>
+              <p class="streak-subtitle">Keep your momentum going.</p>
+            </div>
+            <div class="streak-count">
+              <div class="count-number" id="streakDays">5</div>
+              <div class="count-label">day streak</div>
+            </div>
+          </div>
 
-    <!-- MAIN -->
-    <main class="dashboard-main">
-      <!-- Header -->
-      <header class="dashboard-header">
-        <div class="greeting">
-          <h1>Hi, <span id="userName">User</span></h1>
-          <p>Ready to continue your learning journey today?</p>
+          <div class="streak-badge">
+            <p>🔥 Best streak so far: 9 days. You're getting close!</p>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-bar">
+              <div class="bar active" style="height: 40%;"></div>
+              <span class="bar-label">Mon</span>
+            </div>
+            <div class="chart-bar">
+              <div class="bar active" style="height: 60%;"></div>
+              <span class="bar-label">Tue</span>
+            </div>
+            <div class="chart-bar">
+              <div class="bar active" style="height: 80%;"></div>
+              <span class="bar-label">Wed</span>
+            </div>
+            <div class="chart-bar">
+              <div class="bar active" style="height: 55%;"></div>
+              <span class="bar-label">Thu</span>
+            </div>
+            <div class="chart-bar">
+              <div class="bar active" style="height: 70%;"></div>
+              <span class="bar-label">Fri</span>
+            </div>
+            <div class="chart-bar">
+              <div class="bar active" style="height: 30%;"></div>
+              <span class="bar-label active">Today</span>
+            </div>
+            <div class="chart-bar">
+              <div class="bar" style="height: 0%;"></div>
+              <span class="bar-label">Sun</span>
+            </div>
+          </div>
+
+          <div class="focus-analysis">
+            <svg class="focus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M12 3a9 9 0 100 18 9 9 0 000-18z" />
+            </svg>
+            <p>
+              You typically focus best around <span class="focus-time">8:00 PM</span>.
+              Try to start your session before then today.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- My Courses -->
+      <section class="courses-section">
+        <div class="section-header">
+          <h2 class="section-title">My courses</h2>
+          <button class="view-all-btn">View all courses</button>
         </div>
-        <div class="header-actions">
-          <div class="badge-soft">Streak: <span id="streakDays">1</span> day</div>
-        </div>
-      </header>
 
-      <!-- Hero -->
-      <section class="dashboard-hero">
-        <div class="hero-left">
-          <div class="study-illustration">
-            <svg width="120" height="120" viewBox="0 0 200 200">
-              <circle cx="100" cy="80" r="40" fill="#ffd93d" />
-              <rect x="70" y="120" width="60" height="70" rx="5" fill="#667eea" />
-              <circle cx="85" cy="75" r="5" fill="#111827" />
-              <circle cx="115" cy="75" r="5" fill="#111827" />
-              <path d="M85 90 Q100 97 115 90" stroke="#111827" stroke-width="2" fill="none" />
-              <rect x="50" y="160" width="100" height="10" rx="5" fill="#1f2937" />
+        <div class="grid-2">
+          <article class="course-card active">
+            <div class="course-header">
+              <div>
+                <h3 class="course-title">Python Basics</h3>
+              </div>
+              <span class="difficulty-badge difficulty-easy">Easy</span>
+            </div>
+
+            <div class="course-progress">
+              <div class="progress-label">
+                <span>Overall progress</span>
+                <span>80%</span>
+              </div>
+              <div class="course-progress-bar">
+                <div class="course-progress-fill progress-easy" style="width: 80%;"></div>
+              </div>
+            </div>
+
+            <div class="course-footer">
+              <span class="lessons-left">2 lessons left to complete</span>
+              <button class="continue-btn">
+                Continue
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="course-card">
+            <div class="course-header">
+              <div>
+                <h3 class="course-title">Data Structures – Lists & Arrays</h3>
+              </div>
+              <span class="difficulty-badge difficulty-medium">Medium</span>
+            </div>
+
+            <div class="course-progress">
+              <div class="progress-label">
+                <span>Overall progress</span>
+                <span>42%</span>
+              </div>
+              <div class="course-progress-bar">
+                <div class="course-progress-fill progress-medium" style="width: 42%;"></div>
+              </div>
+            </div>
+
+            <div class="course-footer">
+              <span class="lessons-left">5 lessons left to complete</span>
+              <button class="continue-btn">
+                Resume
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Performance summary -->
+      <section class="performance-card">
+        <div class="performance-header">
+          <div class="ai-icon-wrapper">
+            <svg class="ai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6v6l4 2" />
+              <circle cx="12" cy="12" r="9" stroke-width="2" />
             </svg>
           </div>
-          <div class="hero-left-content">
-            <div class="hero-label">Today's mission</div>
-            <div class="hero-title">Complete your key learning goals</div>
-            <div class="hero-desc">
-              Watch at least one class, solve three practice questions and review your notes.
+          <div class="performance-title-section">
+            <div class="performance-title-row">
+              <h3>Performance insight</h3>
+              <span class="ai-badge">AI generated</span>
             </div>
-            <div class="hero-tags">
-              <span class="hero-tag">Consistency</span>
-              <span class="hero-tag">Deep work</span>
-              <span class="hero-tag">Small wins</span>
-            </div>
+            <p class="performance-text">
+              You're strong in <span class="highlight-skill">Python basics</span>,
+              especially variables and functions. You would benefit from more practice with
+              <span class="highlight-improve">loops</span> and
+              <span class="highlight-improve">lists</span>, where your accuracy drops after longer sessions.
+            </p>
           </div>
         </div>
 
-        <div class="hero-right">
-          <div>
-            <div class="hero-right-title">Study streak</div>
-            <div class="hero-streak">Day <span id="heroDay">1</span> of focus</div>
+        <div class="stats-container">
+          <div class="stat-item">
+            <div class="stat-value">82%</div>
+            <div class="stat-label">Overall accuracy</div>
           </div>
-          <p class="hero-subtitle">
-            Keep up the great work! You're building a powerful learning habit.
-          </p>
-          <div class="hero-progress-row">
-            <span class="hero-progress-label">Today's completion</span>
-            <span class="hero-progress-label"><span id="completionPercent">68</span>%</span>
-          </div>
-          <div class="hero-progress-bar">
-            <div class="hero-progress-fill" id="heroProgressFill"></div>
-          </div>
-          <div class="hero-kpi">
-            <div class="hero-kpi-item">
-              <div class="hero-kpi-label">Focus time</div>
-              <div class="hero-kpi-value" id="focusMinutes">45 min</div>
+          <div class="stat-item bordered">
+            <div class="stat-value-row">
+              <span class="stat-value">+14%</span>
+              <svg class="trend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M5 12l5 5L20 7" />
+              </svg>
             </div>
-            <div class="hero-kpi-item">
-              <div class="hero-kpi-label">Tasks done</div>
-              <div class="hero-kpi-value" id="tasksDone">3 / 5</div>
-            </div>
+            <div class="stat-label">Improvement vs last week</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">4/7</div>
+            <div class="stat-label">Days you hit your goal</div>
           </div>
         </div>
       </section>
 
-      <!-- Subjects -->
-      <section class="subjects-section">
-        <div class="section-header">
-          <div>
-            <h2>Your classes</h2>
-            <p>Practice and review your learning progress.</p>
-          </div>
+      <!-- Recommendations -->
+      <section class="recommendations-card">
+        <div class="recommendations-header">
+          <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
+          </svg>
+          <h2>AI recommendations for you</h2>
         </div>
 
-        <div class="subjects-grid">
-          <article class="subject-card" data-subject="Python">
-            <div class="subject-chip-row">
-              <span class="subject-tag">Video</span>
-              <span>4 / 8 lessons</span>
-            </div>
-            <div class="subject-title">Python</div>
-            <p class="subject-desc">
-              Learn the foundations of Python and build automation skills.
-            </p>
-            <div class="subject-meta-row">
-              <div class="subject-progress-line">
-                <div class="subject-progress-line-fill" style="--value: 50%;"></div>
-              </div>
-              <span class="subject-pill">Resume</span>
-            </div>
-          </article>
-
-          <article class="subject-card" data-subject="Maths">
-            <div class="subject-chip-row">
-              <span class="subject-tag">Video</span>
-              <span>5 / 8 lessons</span>
-            </div>
-            <div class="subject-title">Maths</div>
-            <p class="subject-desc">
-              Strengthen your problem-solving through targeted practice.
-            </p>
-            <div class="subject-meta-row">
-              <div class="subject-progress-line">
-                <div class="subject-progress-line-fill" style="--value: 62%;"></div>
-              </div>
-              <span class="subject-pill">Continue</span>
-            </div>
-          </article>
-
-          <article class="subject-card" data-subject="DBMS">
-            <div class="subject-chip-row">
-              <span class="subject-tag">Video</span>
-              <span>2 / 6 lessons</span>
-            </div>
-            <div class="subject-title">DBMS</div>
-            <p class="subject-desc">
-              Understand how databases work and design efficient models.
-            </p>
-            <div class="subject-meta-row">
-              <div class="subject-progress-line">
-                <div class="subject-progress-line-fill" style="--value: 34%;"></div>
-              </div>
-              <span class="subject-pill">Start now</span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- Panels -->
-      <section class="panels-section">
-        <div class="panels-grid">
-          <article class="panel">
-            <div class="panel-header">
-              <div class="panel-title">Today's overview</div>
-              <span class="panel-help">Quick stats</span>
-            </div>
-            <div class="overview-grid">
-              <div class="overview-item">
-                <div class="overview-label">Lessons completed</div>
-                <div class="overview-value" id="ovLessons">2</div>
-                <div class="overview-sub">out of 4 planned</div>
-              </div>
-              <div class="overview-item">
-                <div class="overview-label">Practice questions</div>
-                <div class="overview-value" id="ovQuestions">18</div>
-                <div class="overview-sub">target: 20</div>
-              </div>
-              <div class="overview-item">
-                <div class="overview-label">Focus minutes</div>
-                <div class="overview-value" id="ovMinutes">45</div>
-                <div class="overview-sub">goal: 60</div>
-              </div>
-              <div class="overview-item">
-                <div class="overview-label">Streak</div>
-                <div class="overview-value" id="ovStreak">1 day</div>
-                <div class="overview-sub">keep it going</div>
-              </div>
-            </div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-header">
-              <div class="panel-title">Performance snapshot</div>
-              <span class="panel-help">Updated daily</span>
-            </div>
-            <div class="data-stats">
-              <div class="circular-progress">
-                <svg width="120" height="120" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="10" />
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="#667eea" stroke-width="10"
-                    stroke-dasharray="188.4 314" stroke-linecap="round" transform="rotate(-90 60 60)" />
-                  <text x="60" y="65" text-anchor="middle" font-size="24" font-weight="bold" fill="#111827">
-                    60%
-                  </text>
+        <div class="recommendations-list">
+          <article class="recommendation-item">
+            <div class="recommendation-content">
+              <div class="recommendation-title-row">
+                <h4>Practice set – Python loops</h4>
+                <svg class="sparkle-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
                 </svg>
               </div>
-              <div class="ranking-box">
-                <div class="rank-number">15</div>
-                <div class="rank-label">Global ranking</div>
-                <div class="rank-label">Keep improving</div>
-              </div>
+              <p class="recommendation-desc">
+                Short, focused questions to solidify for/while loops and break/continue logic.
+              </p>
+              <span class="recommendation-reason">
+                You missed 3 loop questions yesterday — this will help close the gap.
+              </span>
             </div>
-            <div class="progress-detail">
-              <div class="progress-item">
-                <span>Overall progress</span>
-                <span>60%</span>
-              </div>
-              <div class="progress-item">
-                <span>Weekly consistency</span>
-                <span>4 / 7 days</span>
-              </div>
-              <div class="progress-note">You are ahead of most learners this week.</div>
-            </div>
+            <button class="arrow-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </article>
 
-          <article class="panel">
-            <div class="panel-header">
-              <div class="panel-title">Recommended for you</div>
-              <span class="panel-help">Smart suggestions</span>
+          <article class="recommendation-item">
+            <div class="recommendation-content">
+              <div class="recommendation-title-row">
+                <h4>Deep dive – Lists & arrays</h4>
+                <svg class="sparkle-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
+                </svg>
+              </div>
+              <p class="recommendation-desc">
+                A guided lesson on indexing, slicing, and common list methods with interactive examples.
+              </p>
+              <span class="recommendation-reason">
+                You asked about "Linked Lists" in AI Chat — this is a great bridge.
+              </span>
             </div>
-            <div class="recommendations-list">
-              <div class="recommendation-item" data-topic="Advanced Mathematics">
-                <div class="rec-icon">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M5 4h14v4H5z"></path>
-                    <path d="M9 12h10v4H9z"></path>
-                    <path d="M5 12h2v8H5z"></path>
-                  </svg>
-                </div>
-                <div class="rec-content">
-                  <h4>Advanced Mathematics</h4>
-                  <p>Continue where you left off</p>
-                </div>
+            <button class="arrow-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </article>
+
+          <article class="recommendation-item">
+            <div class="recommendation-content">
+              <div class="recommendation-title-row">
+                <h4>Focus session – 25‑min deep work</h4>
+                <svg class="sparkle-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
+                </svg>
               </div>
-              <div class="recommendation-item" data-topic="Physics Fundamentals">
-                <div class="rec-icon">
-                  <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M4 12h4M16 12h4M12 4v4M12 16v4"></path>
-                  </svg>
-                </div>
-                <div class="rec-content">
-                  <h4>Physics Fundamentals</h4>
-                  <p>New module available</p>
-                </div>
-              </div>
-              <div class="recommendation-item" data-topic="Coding Challenges">
-                <div class="rec-icon">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M8 7l-4 5 4 5"></path>
-                    <path d="M16 7l4 5-4 5"></path>
-                    <path d="M11 5l2 14"></path>
-                  </svg>
-                </div>
-                <div class="rec-content">
-                  <h4>Coding Challenges</h4>
-                  <p>Test and grow your skills</p>
-                </div>
-              </div>
+              <p class="recommendation-desc">
+                A timed block with no notifications, optimized for your usual 8 PM schedule.
+              </p>
+              <span class="recommendation-reason">
+                Your focus drops after 30 minutes — this keeps sessions sharp.
+              </span>
             </div>
+            <button class="arrow-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </article>
         </div>
+
+        <button class="view-all-recommendations">View all recommendations</button>
       </section>
-    </main>
-  </div>
+    </div>
+  </main>
 
   <script>
+    // Initialize on page load
     document.addEventListener("DOMContentLoaded", function () {
-      initSidebar();
-      initSidebarProfileDropdown();
-      initSubjectCards();
-      initRecommendations();
+      initUserData();
+      updateMission();
+      loadDynamicData();
     });
 
-    function initSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      const toggle = document.getElementById("sidebarToggle");
-
-      if (!sidebar || !toggle) return;
-
-      toggle.addEventListener("click", function () {
-        sidebar.classList.toggle("collapsed");
-      });
-    }
-
-    function initSidebarProfileDropdown() {
-      const profileBtn = document.getElementById("profileButton");
-      const profileDropdown = document.getElementById("profileDropdown");
-
-      if (!profileBtn || !profileDropdown) return;
-
-      profileBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        profileDropdown.classList.toggle("show");
-      });
-
-      document.addEventListener("click", function () {
-        profileDropdown.classList.remove("show");
-      });
-
+    // Load user data from session storage
+    function initUserData() {
       const storedUser = sessionStorage.getItem("user");
       if (storedUser) {
         try {
           const user = JSON.parse(storedUser);
           const name = user.name || user.firstName || "User";
-          const email = user.email || "user@email.com";
           const initial = name.charAt(0).toUpperCase();
 
+          // Update welcome message
           document.getElementById("userName").textContent = name;
-          document.getElementById("streakDays").textContent = user.streak || 1;
-
-          document.getElementById("sidebarAvatar").textContent = initial;
+          
+          // Update sidebar profile
           document.getElementById("sidebarName").textContent = name;
-          document.getElementById("sidebarEmail").textContent = email;
-
-          document.getElementById("pdAvatar").textContent = initial;
-          document.getElementById("pdName").textContent = name;
-          document.getElementById("pdEmail").textContent = email;
+          document.getElementById("sidebarAvatar").textContent = initial;
         } catch (e) {
           console.warn("Could not parse user data");
         }
       }
     }
 
-    function logout() {
-      if (confirm("Are you sure you want to logout?")) {
-        sessionStorage.removeItem("user");
-        window.location.href = "index.html";
+    // Load dynamic data from APIs
+    async function loadDynamicData() {
+      const storedUser = sessionStorage.getItem("user");
+      if (!storedUser) {
+        console.warn("No user logged in");
+        return;
+      }
+
+      try {
+        const user = JSON.parse(storedUser);
+        const email = user.email || "test@example.com";
+
+        // Load study streak data
+        await loadStudyStreak(email);
+        
+        // Load focus analysis data
+        await loadFocusAnalysis(email);
+      } catch (e) {
+        console.error("Error loading dynamic data:", e);
       }
     }
 
-    function initSubjectCards() {
-  document.querySelectorAll(".subject-card").forEach((card) => {
-    card.addEventListener("click", function (e) {
-      e.preventDefault();
-      this.classList.add("active");
-      setTimeout(() => this.classList.remove("active"), 150);
-    });
-  });
-}
+    // Load study streak data
+    async function loadStudyStreak(email) {
+      try {
+        const response = await fetch(`/dashboard/study-streak/?email=${encodeURIComponent(email)}`);
+        const data = await response.json();
 
-   function initRecommendations() {
-  document.querySelectorAll(".recommendation-item").forEach((item) => {
-    item.addEventListener("click", function (e) {
-      e.preventDefault();
-      this.classList.add("active");
-      setTimeout(() => this.classList.remove("active"), 150);
-    });
-  });
-}
+        if (data.success && data.study_streak) {
+          const streak = data.study_streak;
+          
+          // Update streak count
+          document.getElementById("streakDays").textContent = streak.current_streak_days;
+          
+          // Update streak message
+          const streakBadge = document.querySelector(".streak-badge p");
+          if (streakBadge) {
+            streakBadge.textContent = `🔥 Best streak so far: ${streak.longest_streak_days} days. ${streak.current_streak_days >= streak.longest_streak_days ? "New record!" : "You're getting close!"}`;
+          }
+
+          // Update weekly chart
+          if (streak.weekly_data && streak.weekly_data.length > 0) {
+            const chartBars = document.querySelectorAll(".chart-bar");
+            const maxMinutes = Math.max(...streak.weekly_data.map(d => d.minutes), 60);
+            
+            streak.weekly_data.forEach((dayData, index) => {
+              if (chartBars[index]) {
+                const bar = chartBars[index].querySelector(".bar");
+                const label = chartBars[index].querySelector(".bar-label");
+                
+                const heightPercent = (dayData.minutes / maxMinutes) * 100;
+                bar.style.height = `${heightPercent}%`;
+                
+                if (dayData.minutes > 0) {
+                  bar.classList.add("active");
+                } else {
+                  bar.classList.remove("active");
+                }
+                
+                label.textContent = dayData.day;
+                if (dayData.day === "Today") {
+                  label.classList.add("active");
+                }
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Error loading study streak:", e);
+      }
+    }
+
+    // Load focus analysis data
+    async function loadFocusAnalysis(email) {
+      try {
+        const response = await fetch(`/dashboard/focus-analysis/?email=${encodeURIComponent(email)}`);
+        const data = await response.json();
+
+        if (data.success && data.focus_analysis) {
+          const focus = data.focus_analysis;
+          
+          // Update focus analysis text
+          const focusAnalysis = document.querySelector(".focus-analysis p");
+          if (focusAnalysis) {
+            focusAnalysis.innerHTML = focus.focus_message;
+          }
+
+          // Update performance card stats if we want to show focus score
+          const statValues = document.querySelectorAll(".stat-value");
+          if (statValues.length >= 3 && focus.focus_score_value) {
+            // You could update one of the stats with focus data if needed
+          }
+        }
+      } catch (e) {
+        console.error("Error loading focus analysis:", e);
+      }
+    }
+
+    function goToProfile() {
+      window.location.href = "/auth/";
+    }
+
+    function goToAIChat() {
+      window.location.href = "/chatbot/";
+    }
+
+    function logout() {
+      if (confirm("Are you sure you want to logout?")) {
+        sessionStorage.removeItem("user");
+        window.location.href = "/";
+      }
+    }
+
+    // Mission progress logic
+    const taskCheckboxes = document.querySelectorAll("[data-task]");
+    const missionCount = document.getElementById("missionCount");
+    const missionProgress = document.getElementById("missionProgress");
+
+    function updateMission() {
+      const total = taskCheckboxes.length;
+      const done = Array.from(taskCheckboxes).filter(c => c.checked).length;
+      const pct = (done / total) * 100;
+      missionCount.textContent = `${done}/${total}`;
+      missionProgress.style.width = pct + "%";
+    }
+
+    taskCheckboxes.forEach(cb => cb.addEventListener("change", updateMission));
   </script>
 </body>
 </html>

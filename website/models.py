@@ -97,3 +97,45 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.content[:50]}..."
+
+
+class StudyStreak(models.Model):
+    """Tracks daily study activity for each user"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_streaks')
+    study_date = models.DateField()
+    minutes_studied = models.IntegerField(default=0)
+    tasks_completed = models.IntegerField(default=0)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'study_streaks'
+        ordering = ['-study_date']
+        unique_together = ['user', 'study_date']
+        indexes = [
+            models.Index(fields=['user', '-study_date'], name='idx_streak_user_date'),
+        ]
+
+    def __str__(self):
+        return f"{self.user.name} - {self.study_date} ({self.minutes_studied} min)"
+
+
+class FocusSession(models.Model):
+    """Tracks individual study sessions to analyze focus patterns"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='focus_sessions')
+    session_date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    duration_minutes = models.IntegerField()
+    subject = models.CharField(max_length=100)
+    focus_score = models.IntegerField(default=0, help_text="Score from 1-10")
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'focus_sessions'
+        ordering = ['-session_date', '-start_time']
+        indexes = [
+            models.Index(fields=['user', '-session_date'], name='idx_focus_user_date'),
+        ]
+
+    def __str__(self):
+        return f"{self.user.name} - {self.session_date} {self.start_time} ({self.duration_minutes}min)"
