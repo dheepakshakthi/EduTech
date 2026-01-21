@@ -354,3 +354,47 @@ def messages_api(request):
 
     return JsonResponse({'success': False, 'message': 'Only GET allowed'})
 
+
+def today_mission_api(request):
+    if request.method == "GET":
+        # Static logic now – can be dynamic later
+        mission = {
+            "skill_level": "Beginner",
+            "mission_text": "Watch 1 video and complete 3 practice questions",
+            "daily_goal_completed": False,
+            "streak_message": "You usually study at 8 PM – don’t miss today"
+        }
+
+        return JsonResponse({
+            "success": True,
+            "today_mission": mission
+        })
+
+from datetime import date
+def study_streak_api(request):
+    if request.method == "GET":
+        streak_data = {
+            "current_streak_days": 6,
+            "longest_streak_days": 14,
+            "last_active_date": date.today().isoformat(),
+            "streak_message": "You are on a 6-day learning streak. Keep going!"
+        }
+
+        return JsonResponse({
+            "success": True,
+            "study_streak": streak_data
+        })
+
+def focus_analysis_api(request):
+    if request.method == "GET":
+        focus_data = {
+            "preferred_study_time": "Evening (7 PM – 9 PM)",
+            "average_session_minutes": 42,
+            "focus_score": "High",
+            "focus_message": "You learn best in the evening with longer focused sessions."
+        }
+
+        return JsonResponse({
+            "success": True,
+            "focus_analysis": focus_data
+        })
